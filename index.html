@@ -52,6 +52,7 @@
     <script>
         let localStream;
         let localVideoElement;
+        let peerConnection;
 
         async function startCamera() {
             try {
@@ -92,8 +93,27 @@
             }
         }
 
+        async function setupPeerConnection() {
+            peerConnection = new RTCPeerConnection();
+
+            localStream.getTracks().forEach(track => {
+                peerConnection.addTrack(track, localStream);
+            });
+
+            peerConnection.ontrack = event => {
+                const remoteVideoElement = document.createElement('video');
+                remoteVideoElement.srcObject = event.streams[0];
+                remoteVideoElement.autoplay = true;
+                const videoWrapper = document.createElement('div');
+                videoWrapper.classList.add('videoWrapper');
+                videoWrapper.appendChild(remoteVideoElement);
+                document.getElementById('videosContainer').appendChild(videoWrapper);
+            };
+        }
+
         async function setup() {
             await startCamera();
+            setupPeerConnection();
 
             document.getElementById('toggleMic').addEventListener('click', toggleMic);
             document.getElementById('toggleCamera').addEventListener('click', toggleCamera);
