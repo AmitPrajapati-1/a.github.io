@@ -33,8 +33,8 @@
         }
 
         .localVideoWrapper video {
-            width: 150px; /* Width of the local user's video container */
-            height: 100px; /* Height of the local user's video container */
+            width: 300px; /* Width of the local user's video container */
+            height: 200px; /* Height of the local user's video container */
         }
     </style>
 </head>
@@ -53,6 +53,7 @@
         let localStream;
         let localVideoElement;
         let peerConnection;
+        let remoteStream;
 
         async function startCamera() {
             try {
@@ -101,8 +102,9 @@
             });
 
             peerConnection.ontrack = event => {
+                remoteStream = event.streams[0];
                 const remoteVideoElement = document.createElement('video');
-                remoteVideoElement.srcObject = event.streams[0];
+                remoteVideoElement.srcObject = remoteStream;
                 remoteVideoElement.autoplay = true;
                 const videoWrapper = document.createElement('div');
                 videoWrapper.classList.add('videoWrapper');
